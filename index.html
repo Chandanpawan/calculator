@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unique Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5; /* Light gray background */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background-color: #ffffff;
+      border-radius: 15px; /* More rounded corners */
+      box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+      padding: 25px;
+      width: 400px; /* Adjusted width */
+    }
+
+    .display {
+      background-color: #4a90e2; /* Blue background */
+      color: #ffffff; /* White text */
+      font-size: 2.2rem;
+      text-align: right;
+      padding: 20px;
+      border-radius: 15px;
+      margin-bottom: 15px;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .btn {
+      background-color: #e0e0e0; /* Light gray */
+      border: none;
+      padding: 20px;
+      font-size: 1.6rem;
+      border-radius: 12px; /* Rounded corners */
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn.operator {
+      background-color: #ff6f61; /* Coral for operators */
+      color: white;
+    }
+
+    .btn.equals {
+      grid-column: span 4;
+      background-color: #00bfae; /* Teal for equals button */
+      color: white;
+    }
+
+    .btn:active {
+      background-color: #c0c0c0; /* Slightly darker gray when active */
+    }
+
+    #clear {
+      background-color: #ff3d00; /* Red for clear button */
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="display" id="display">0</div>
+    <div class="buttons">
+      <button class="btn" data-value="7">7</button>
+      <button class="btn" data-value="8">8</button>
+      <button class="btn" data-value="9">9</button>
+      <button class="btn operator" data-value="/">÷</button>
+      
+      <button class="btn" data-value="4">4</button>
+      <button class="btn" data-value="5">5</button>
+      <button class="btn" data-value="6">6</button>
+      <button class="btn operator" data-value="*">×</button>
+
+      <button class="btn" data-value="1">1</button>
+      <button class="btn" data-value="2">2</button>
+      <button class="btn" data-value="3">3</button>
+      <button class="btn operator" data-value="-">-</button>
+
+      <button class="btn" data-value="0">0</button>
+      <button class="btn" data-value=".">.</button>
+      <button class="btn" id="clear">C</button>
+      <button class="btn operator" data-value="+">+</button>
+      
+      <button class="btn equals" id="equals">=</button>
+    </div>
+  </div>
+
+  <script>
+    const display = document.getElementById("display");
+    let currentInput = "";
+    let previousInput = "";
+    let operator = "";
+
+    // Update the display
+    function updateDisplay() {
+      display.textContent = currentInput || "0";
+    }
+
+    // Handle button clicks
+    document.querySelectorAll(".btn").forEach(button => {
+      button.addEventListener("click", () => {
+        const value = button.getAttribute("data-value");
+
+        // Clear the input
+        if (button.id === "clear") {
+          currentInput = "";
+          previousInput = "";
+          operator = "";
+          updateDisplay();
+          return;
+        }
+
+        // Handle operator
+        if (button.classList.contains("operator")) {
+          if (currentInput !== "") {
+            previousInput = currentInput;
+            currentInput = "";
+            operator = value;
+          }
+          return;
+        }
+
+        // Append number or dot
+        if (value === "." && currentInput.includes(".")) return;
+        currentInput += value;
+        updateDisplay();
+      });
+    });
+
+    // Handle equals button
+    document.getElementById("equals").addEventListener("click", () => {
+      if (previousInput === "" || currentInput === "") return;
+
+      let result;
+      const prev = parseFloat(previousInput);
+      const current = parseFloat(currentInput);
+
+      switch (operator) {
+        case "+":
+          result = prev + current;
+          break;
+        case "-":
+          result = prev - current;
+          break;
+        case "*":
+          result = prev * current;
+          break;
+        case "/":
+          result = prev / current;
+          break;
+        default:
+          return;
+      }
+
+      currentInput = result.toString();
+      previousInput = "";
+      operator = "";
+      updateDisplay();
+    });
+  </script>
+</body>
+</html>
